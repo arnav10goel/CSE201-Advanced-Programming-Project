@@ -15,13 +15,4 @@ public class MyGdxGame extends Game {
 		setScreen(new LoadScreen(this));
 	}
 
-	@Override
-	public void render () {
-
-	}
-	
-	@Override
-	public void dispose () {
-
-	}
 }

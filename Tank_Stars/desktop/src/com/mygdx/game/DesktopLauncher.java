@@ -9,7 +9,7 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
-		config.setWindowedMode(640, 360 );
+		config.setWindowedMode(512, 288 );
 		config.setTitle("TankStars");
 		new Lwjgl3Application(new MyGdxGame(), config);
 	}
