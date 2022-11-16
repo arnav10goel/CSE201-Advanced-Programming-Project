@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setWindowedMode(640, 360 );
-		config.setTitle("TankStars_anoushka_arnav");
+		config.setTitle("TankStars");
 		new Lwjgl3Application(new MyGdxGame(), config);
 	}
 }
