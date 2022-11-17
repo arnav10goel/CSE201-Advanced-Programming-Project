@@ -37,8 +37,8 @@ public class MenuScreen implements Screen{
         comp_button_sprite = new Sprite(comp_button);
         friend_button_sprite.setSize(2*friend_button.getWidth()/9, 2*friend_button.getHeight()/9);
         comp_button_sprite.setSize(2*comp_button.getWidth()/9, 2*comp_button.getHeight()/9);
-        comp_button_sprite.setPosition(1760*w/2546, 689*h/1170);
-        friend_button_sprite.setPosition(1760*w/2546, 233*h/1170);
+        comp_button_sprite.setPosition(1760*w/2550, 689*h/1180);
+        friend_button_sprite.setPosition(1760*w/2550, 233*h/1180);
         this.coord = new Vector3();
         this.cam = new OrthographicCamera();
         cam.setToOrtho(false);
