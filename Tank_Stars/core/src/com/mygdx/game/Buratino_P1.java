@@ -34,14 +34,14 @@ public class Buratino_P1 implements Screen {
         img_sprite.setSize(w,h);
         right_arrow = new Texture(Gdx.files.internal("right_arrow.png"));
         right_arrow_sprite = new Sprite(right_arrow);
-        right_arrow_sprite.setSize(2*right_arrow.getWidth()/9, 2*right_arrow.getHeight()/9);
+
+        right_arrow_sprite.setSize(2*right_arrow_sprite.getWidth()/9, 2*right_arrow_sprite.getHeight()/9);
         left_arrow = new Texture(Gdx.files.internal("left_arrow.png"));
         left_arrow_sprite = new Sprite(left_arrow);
-        left_arrow_sprite.setSize(2*left_arrow.getWidth()/9, 2*left_arrow.getHeight()/9);
+        left_arrow_sprite.setSize(2*left_arrow_sprite.getWidth()/9, 2*left_arrow_sprite.getHeight()/9);
         left_arrow_sprite.setPosition(w*1626/2546, h*560/1170);
         right_arrow_sprite.setPosition(w*2472/2546, h*560/1170);
 
-        left_arrow_sprite = new Sprite(left_arrow);
         this.coord = new Vector3();
         this.cam = new OrthographicCamera();
         this.cam.setToOrtho(false);
@@ -91,7 +91,7 @@ public class Buratino_P1 implements Screen {
     }
 
     void handleTouch(){
-        if(Gdx.input.isTouched()){
+        if(Gdx.input.justTouched()){
             coord.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             cam.unproject(coord);
 
