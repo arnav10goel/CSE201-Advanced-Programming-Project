@@ -10,18 +10,18 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 
 public class MainMenu implements Screen {
-    SpriteBatch batch;
-    Texture img;
-    Sprite img_sprite;
-    Texture start;
-    Sprite start_sprite;
-    Texture resume;
-    Sprite resume_sprite;
-    Texture exit;
-    Sprite exit_sprite;
+    private SpriteBatch batch;
+    private Texture img;
+    private Sprite img_sprite;
+    private Texture start;
+    private Sprite start_sprite;
+    private Texture resume;
+    private Sprite resume_sprite;
+    private Texture exit;
+    private Sprite exit_sprite;
     static MyGdxGame game;
-    Vector3 coord;
-    OrthographicCamera cam;
+    private Vector3 coord;
+    private OrthographicCamera cam;
 
     public MainMenu(MyGdxGame game){
         this.game = game;

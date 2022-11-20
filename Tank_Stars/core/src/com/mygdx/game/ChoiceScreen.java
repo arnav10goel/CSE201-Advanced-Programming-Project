@@ -13,24 +13,24 @@ import java.util.ArrayList;
 
 public class ChoiceScreen implements Screen {
 
-    SpriteBatch batch;
-    Texture img;
-    Sprite img_sprite;
-    Texture choose;
-    Sprite choose_sprite;
-    Texture left_arrow;
-    Sprite left_arrow_sprite;
+    private SpriteBatch batch;
+    private Texture img;
+    private Sprite img_sprite;
+    private Texture choose;
+    private Sprite choose_sprite;
+    private Texture left_arrow;
+    private Sprite left_arrow_sprite;
 
-    Texture right_arrow;
-    Sprite right_arrow_sprite;
+    private Texture right_arrow;
+    private Sprite right_arrow_sprite;
 
     static MyGdxGame game;
 
     static ArrayList<Player> players = new ArrayList<>();
-    Vector3 coord;
-    OrthographicCamera cam;
+    private Vector3 coord;
+    private OrthographicCamera cam;
 
-    String status;
+    private String status;
 
     public ChoiceScreen(MyGdxGame game, String texture, String status){
         this.status = status;

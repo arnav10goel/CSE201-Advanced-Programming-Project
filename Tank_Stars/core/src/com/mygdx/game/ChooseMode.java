@@ -10,18 +10,18 @@ import com.badlogic.gdx.math.Vector3;
 
 public class ChooseMode implements Screen{
 
-    SpriteBatch batch;
-    Texture friend_button;
-    Texture comp_button;
-    Texture main_menu_bg;
-    Sprite friend_button_sprite;
-    Sprite comp_button_sprite;
+    private SpriteBatch batch;
+    private Texture friend_button;
+    private Texture comp_button;
+    private Texture main_menu_bg;
+    private Sprite friend_button_sprite;
+    private Sprite comp_button_sprite;
 
-    Sprite main_menu_bg_sprite;
+    private Sprite main_menu_bg_sprite;
 
-    static MyGdxGame game;
-    Vector3 coord;
-    OrthographicCamera cam;
+    private static MyGdxGame game;
+    private Vector3 coord;
+    private OrthographicCamera cam;
 
     ChooseMode(MyGdxGame game){
         ChooseMode.game = game;

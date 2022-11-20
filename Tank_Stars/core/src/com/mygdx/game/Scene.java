@@ -10,30 +10,30 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 
 public class Scene implements Screen{
-    SpriteBatch batch;
-    Texture player1;
-    Sprite player1_sprite;
+    private SpriteBatch batch;
+    private Texture player1;
+    private Sprite player1_sprite;
 
-    Texture player2;
-    Sprite player2_sprite;
-    Texture img;
-    Sprite img_sprite;
-    Texture ground;
-    Sprite ground_sprite;
-    Texture tank1;
-    Sprite tank1_sprite;
+    private Texture player2;
+    private Sprite player2_sprite;
+    private Texture img;
+    private Sprite img_sprite;
+    private Texture ground;
+    private Sprite ground_sprite;
+    private Texture tank1;
+    private Sprite tank1_sprite;
 
-    Texture pause;
-    Sprite pause_sprite;
-    Texture toggle;
-    Sprite toggle_sprite;
-    Texture health1;
-    Sprite health1_sprite;
-    Texture health2;
-    Sprite health2_sprite;
+    private Texture pause;
+    private Sprite pause_sprite;
+    private Texture toggle;
+    private Sprite toggle_sprite;
+    private Texture health1;
+    private Sprite health1_sprite;
+    private Texture health2;
+    private Sprite health2_sprite;
     static MyGdxGame game;
-    Vector3 coord;
-    OrthographicCamera cam;
+    private Vector3 coord;
+    private OrthographicCamera cam;
     public Scene(MyGdxGame game) {
         this.game = game;
         batch = new SpriteBatch();
@@ -126,3 +126,4 @@ public class Scene implements Screen{
         player2.dispose();
     }
 }
+

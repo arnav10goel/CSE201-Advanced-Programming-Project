@@ -10,13 +10,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
 public class LoadScreen implements Screen {
-    SpriteBatch batch;
-    Texture img;
-    Sprite img_sprite;
+    private SpriteBatch batch;
+    private Texture img;
+    private Sprite img_sprite;
 
     static MyGdxGame game;
-    Vector3 coord;
-    OrthographicCamera cam;
+    private Vector3 coord;
+    private OrthographicCamera cam;
 
     public LoadScreen(MyGdxGame game){
         LoadScreen.game = game;
