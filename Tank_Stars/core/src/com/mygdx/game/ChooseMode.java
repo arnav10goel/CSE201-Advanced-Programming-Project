@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 
-public class MenuScreen implements Screen{
+public class ChooseMode implements Screen{
 
     SpriteBatch batch;
     Texture friend_button;
@@ -23,8 +23,8 @@ public class MenuScreen implements Screen{
     Vector3 coord;
     OrthographicCamera cam;
 
-    MenuScreen(MyGdxGame game){
-        this.game = game;
+    ChooseMode(MyGdxGame game){
+        ChooseMode.game = game;
         batch = new SpriteBatch();
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -99,7 +99,7 @@ public class MenuScreen implements Screen{
 
 
             if((touchX>= friend_button_sprite.getX()) && touchX<=(friend_button_sprite.getX()+friend_button_sprite.getWidth()) && (touchY>=friend_button_sprite.getY()) && touchY<=(friend_button_sprite.getY()+friend_button_sprite.getHeight()) ) {
-                game.setScreen(new Buratino_P1(game));
+                game.setScreen(new ChoiceScreen(game, "Buratino_P1.png", "Buratino_P1"));
             }
 
         }

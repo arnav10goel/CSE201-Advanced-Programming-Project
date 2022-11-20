@@ -19,7 +19,7 @@ public class LoadScreen implements Screen {
     OrthographicCamera cam;
 
     public LoadScreen(MyGdxGame game){
-        this.game = game;
+        LoadScreen.game = game;
         batch = new SpriteBatch();
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
@@ -37,8 +37,8 @@ public class LoadScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        //Gdx.gl.glClearColor(1, 1, 1, 1);
-        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         img_sprite.draw(batch);
         //batch.draw(img, 10, 10);
@@ -74,7 +74,7 @@ public class LoadScreen implements Screen {
     }
 
     void handleTouch(){
-        if(Gdx.input.isTouched()){
+        if(Gdx.input.justTouched()){
             coord.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             cam.unproject(coord);
 
@@ -82,7 +82,7 @@ public class LoadScreen implements Screen {
             float touch_y = coord.y;
 
             if(touch_x >= img_sprite.getX() && touch_x <= (img_sprite.getX() + img_sprite.getWidth()) && touch_y >= img_sprite.getY() && touch_y <= (img_sprite.getY() + img_sprite.getHeight())){
-                game.setScreen(new MenuScreen(game));
+                game.setScreen(new MainMenu(game));
             }
         }
     }
