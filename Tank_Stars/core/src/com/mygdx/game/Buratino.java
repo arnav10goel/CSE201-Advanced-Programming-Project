@@ -1,6 +1,11 @@
 package com.mygdx.game;
 
 public class Buratino extends Tank{
+
+    public Buratino() {
+        super(750);
+    }
+
     @Override
     public void move() {
         super.move();
@@ -14,5 +19,10 @@ public class Buratino extends Tank{
     @Override
     public void set_aim() {
         super.set_aim();
+    }
+
+    @Override
+    public int getHealth_points() {
+        return super.getHealth_points();
     }
 }

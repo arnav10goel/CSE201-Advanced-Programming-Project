@@ -2,6 +2,10 @@ package com.mygdx.game;
 
 public class Frost extends Tank{
 
+    Frost() {
+        super(800);
+    }
+
     @Override
     public void move() {
         super.move();
@@ -15,5 +19,10 @@ public class Frost extends Tank{
     @Override
     public void set_aim() {
         super.set_aim();
+    }
+
+    @Override
+    public int getHealth_points() {
+        return super.getHealth_points();
     }
 }

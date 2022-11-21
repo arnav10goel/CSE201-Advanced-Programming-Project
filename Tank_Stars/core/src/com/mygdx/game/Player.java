@@ -3,10 +3,12 @@ package com.mygdx.game;
 public class Player {
     private String status;
     private Tank tank_chosen;
+    private int health_dynamic;
 
     Player(String x, Tank y){
         this.status = x;
         this.tank_chosen = y;
+        this.health_dynamic = this.tank_chosen.getHealth_points();
     }
 
     public String getStatus() {
@@ -19,5 +21,13 @@ public class Player {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getHealth_dynamic() {
+        return health_dynamic;
+    }
+
+    public void setHealth_dynamic(int health_dynamic) {
+        this.health_dynamic = health_dynamic;
     }
 }
