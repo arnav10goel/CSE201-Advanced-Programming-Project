@@ -9,11 +9,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 
-public class Scene implements Screen{
+public class PauseMenu implements Screen{
     private SpriteBatch batch;
     private Texture player1;
     private Sprite player1_sprite;
-
+    private Texture pause_menu;
+    private Sprite pause_menu_sprite;
     private Texture player2;
     private Sprite player2_sprite;
     private Texture img;
@@ -34,7 +35,7 @@ public class Scene implements Screen{
     static MyGdxGame game;
     private Vector3 coord;
     private OrthographicCamera cam;
-    public Scene(MyGdxGame game) {
+    public PauseMenu(MyGdxGame game) {
         this.game = game;
         batch = new SpriteBatch();
         float w = Gdx.graphics.getWidth();
@@ -53,6 +54,10 @@ public class Scene implements Screen{
         health2 = new Texture("player2_health.png");
         health1_sprite = new Sprite(health1);
         health2_sprite = new Sprite(health2);
+        pause_menu = new Texture("pause_menu.png");
+        pause_menu_sprite = new Sprite(pause_menu);
+        pause_menu_sprite.setSize(pause_menu_sprite.getWidth()/4, pause_menu_sprite.getHeight()/4);
+        pause_menu_sprite.setPosition(851*w/2550, 260*h/1180);
         health1_sprite.setSize(health1.getWidth()/5, health1.getHeight()/5);
         health2_sprite.setSize(health2.getWidth()/5, health2.getHeight()/5);
         health1_sprite.setPosition(434*w/2550, 951*h/1180);
@@ -86,12 +91,14 @@ public class Scene implements Screen{
         batch.begin();
         img_sprite.draw(batch);
         ground_sprite.draw(batch);
+
         player1_sprite.draw(batch);
         player2_sprite.draw(batch);
         pause_sprite.draw(batch);
         toggle_sprite.draw(batch);
         health1_sprite.draw(batch);
         health2_sprite.draw(batch);
+        pause_menu_sprite.draw(batch);
         batch.end();
         handleTouch();
     }
@@ -127,15 +134,7 @@ public class Scene implements Screen{
     }
     public void handleTouch(){
         if(Gdx.input.justTouched()) {
-            coord.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            cam.unproject(coord);
-
-            float touch_x = coord.x;
-            float touch_y = coord.y;
-
-            if (touch_x >= pause_sprite.getX() && touch_x <= (pause_sprite.getX() + pause_sprite.getWidth()) && touch_y >= pause_sprite.getY() && touch_y <= (pause_sprite.getY() + pause_sprite.getHeight())) {
-                game.setScreen(new PauseMenu(game));
-            }
+            game.setScreen(new Scene(game));
         }
     }
 }

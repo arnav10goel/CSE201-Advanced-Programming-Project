@@ -105,7 +105,7 @@ public class MainMenu implements Screen {
                 game.setScreen(new ChooseMode(game));
             }
             else if((touch_x>= resume_sprite.getX()) && touch_x <= (resume_sprite.getX()+resume_sprite.getWidth()) && (touch_y>=resume_sprite.getY()) && touch_y<=(resume_sprite.getY()+resume_sprite.getHeight())){
-                //Add memory
+                game.setScreen(new Resume(game));
             }
             else if((touch_x>= exit_sprite.getX()) && touch_x <= (exit_sprite.getX()+exit_sprite.getWidth()) && (touch_y>=exit_sprite.getY()) && touch_y<=(exit_sprite.getY()+exit_sprite.getHeight())){
                 Gdx.app.exit();
