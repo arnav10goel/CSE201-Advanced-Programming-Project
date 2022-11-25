@@ -82,6 +82,10 @@ public class ChoiceScreen implements Screen {
         this.handleTouch();
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     @Override
     public void resize(int width, int height) {
 
@@ -116,7 +120,7 @@ public class ChoiceScreen implements Screen {
             float touch_y = coord.y;
 
             if(touch_x >= right_arrow_sprite.getX() && touch_x <= (right_arrow_sprite.getX() + right_arrow_sprite.getWidth()) && touch_y >= right_arrow_sprite.getY() && touch_y <= (right_arrow_sprite.getY() + right_arrow_sprite.getHeight())){
-                switch (this.status) {
+                switch (this.getStatus()) {
                     case "Buratino_P1":
                         game.setScreen(new ChoiceScreen(game, "Frost_P1.png", "Frost_P1"));
                         break;
@@ -132,7 +136,7 @@ public class ChoiceScreen implements Screen {
                 }
             }
             else if(touch_x >= left_arrow_sprite.getX() && touch_x <= (left_arrow_sprite.getX() + left_arrow_sprite.getWidth()) && touch_y >= left_arrow_sprite.getY() && touch_y <= (left_arrow_sprite.getY() + left_arrow_sprite.getHeight())){
-                switch (this.status) {
+                switch (this.getStatus()) {
                     case "Frost_P1":
                         game.setScreen(new ChoiceScreen(game, "Buratino_P1.png", "Buratino_P1"));
                         break;
@@ -148,7 +152,7 @@ public class ChoiceScreen implements Screen {
                 }
             }
             else if (touch_x >= choose_sprite.getX() && touch_x <= (choose_sprite.getX() + choose_sprite.getWidth()) && touch_y >= choose_sprite.getY() && touch_y <= (choose_sprite.getY() + choose_sprite.getHeight())){
-                if(this.status.equals("Buratino_P1") || this.status.equals("Frost_P1") || this.status.equals("Spectre_P1")){
+                if(this.getStatus().equals("Buratino_P1") || this.getStatus().equals("Frost_P1") || this.getStatus().equals("Spectre_P1")){
                     switch (this.status) {
                         case "Buratino_P1":
                             Tank tank_new = new Buratino();
@@ -169,7 +173,7 @@ public class ChoiceScreen implements Screen {
                     game.setScreen(new ChoiceScreen(game, "Buratino_P2.png", "Buratino_P2"));
                 }
                 else{
-                    switch (this.status) {
+                    switch (this.getStatus()) {
                         case "Buratino_P2":
                             Tank tank_new = new Buratino();
                             Player current_player = new Player("Player2", tank_new);
