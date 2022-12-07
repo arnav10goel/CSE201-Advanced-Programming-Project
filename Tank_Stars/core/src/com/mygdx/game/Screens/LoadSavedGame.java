@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -8,6 +8,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.Screens.LoadScreen;
+import com.mygdx.game.Screens.MainMenu;
 
 public class LoadSavedGame implements Screen {
     private SpriteBatch batch;

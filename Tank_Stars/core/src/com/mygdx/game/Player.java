@@ -1,11 +1,13 @@
 package com.mygdx.game;
 
+import com.mygdx.game.Tanks.Tank;
+
 public class Player {
     private String status;
     private Tank tank_chosen;
     private int health_dynamic;
 
-    Player(String x, Tank y){
+    public Player(String x, Tank y){
         this.status = x;
         this.tank_chosen = y;
         this.health_dynamic = this.tank_chosen.getHealth_points();

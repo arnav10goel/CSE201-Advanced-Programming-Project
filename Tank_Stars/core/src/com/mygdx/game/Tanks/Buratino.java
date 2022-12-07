@@ -1,8 +1,9 @@
-package com.mygdx.game;
+package com.mygdx.game.Tanks;
 
-public class Spectre extends Tank{
-    Spectre() {
-        super(1000);
+public class Buratino extends Tank {
+
+    public Buratino() {
+        super(750);
     }
 
     @Override

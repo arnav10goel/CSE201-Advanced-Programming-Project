@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.Tanks;
 
 public abstract class Tank {
     private int health_points;

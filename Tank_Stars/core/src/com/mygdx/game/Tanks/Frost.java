@@ -1,8 +1,10 @@
-package com.mygdx.game;
+package com.mygdx.game.Tanks;
 
-public class Frost extends Tank{
+import com.mygdx.game.Tanks.Tank;
 
-    Frost() {
+public class Frost extends Tank {
+
+    public Frost() {
         super(800);
     }
 
