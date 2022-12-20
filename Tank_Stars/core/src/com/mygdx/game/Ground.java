@@ -43,8 +43,8 @@ public class Ground{
             float x = (2*i + 1)*(0.5f);
             points_x.add((float) i);
             points_x.add(x);
-            points_y.add((float)(h+amp*(Math.sin(0.01*2*i)+Math.sin(0.01*(-1)*i))));
-            points_y.add((float)(h+amp*(Math.sin(0.01*2*x)+Math.sin(0.01*(-1)*x))));
+            points_y.add((float)(h+amp*(Math.sin(0.01*1.5*i)-Math.sin(0.01*(0.8)*i)-Math.cos(0.01*(0.7)*i))));
+            points_y.add((float)(h+amp*(Math.sin(0.01*1.5*x)-Math.sin(0.01*(0.8)*x)-Math.cos(0.01*(0.7)*x))));
 
         }
         System.out.println(points_x);
@@ -57,8 +57,8 @@ public class Ground{
             float x = (2*i + 1)*(0.5f);
             points_x.add((float) i);
             points_x.add(x);
-            points_y.add((float)(h+amp*(Math.sin(0.01*2*i)+Math.cos(0.01*(-1)*i))));
-            points_y.add((float)(h+amp*(Math.sin(0.01*2*x)+Math.cos(0.01*(-1)*x))));
+            points_y.add((float)(h+amp*(Math.cos(0.01*1*i)-Math.cos(0.01*(0.4)*i)-Math.cos(0.01*(1.2)*i))));
+            points_y.add((float)(h+amp*(Math.cos(0.01*1*x)-Math.cos(0.01*(0.4)*x)-Math.cos(0.01*(1.2)*x))));
         }
         System.out.println(points_x);
         System.out.println(points_y);

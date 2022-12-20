@@ -3,17 +3,21 @@ package com.mygdx.game.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Bezier;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Ground;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Player;
-import com.mygdx.game.Screens.PauseMenu;
+
+import java.util.ArrayList;
 
 public class Scene implements Screen{
 
@@ -37,7 +41,11 @@ public class Scene implements Screen{
     private final OrthographicCamera cam;
 
     private final Ground myground;
-    private final ShapeRenderer sr;
+    private ShapeRenderer sr;
+    private int angle;
+    private int angle2;
+    private Bezier<Vector2> path1;
+
     public Scene(MyGdxGame game, Player p1, Player p2) {
         this.sr = new ShapeRenderer();
         this.myground = Ground.getInstance(); //Using Singleton Design Pattern to make the ground
@@ -50,6 +58,10 @@ public class Scene implements Screen{
         img = new Texture(Gdx.files.internal("back_scene.png"));
         img_sprite = new Sprite(img);
         img_sprite.setSize(w,h);
+        angle = 4;
+        angle2 = 4;
+
+
 
         switch (p1.getTank_status()){
             case "Buratino_P1":
@@ -116,6 +128,16 @@ public class Scene implements Screen{
         img_sprite.draw(batch);
         batch.end();
         this.myground.plot(sr);
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+        sr=new ShapeRenderer();
+        sr.setAutoShapeType(true);
+        sr.begin(ShapeRenderer.ShapeType.Filled);
+        sr.setColor(0,0,0,1);
+        sr.rect(0.08f*w,0.05f*h,(float)0.15*w,(float)0.05*h);
+        sr.setColor(0,0,0,1);
+        sr.rect(0.76f*w,0.05f*h,(float)0.15*w,(float)0.05*h);
+        sr.end();
         batch.begin();
         player1_sprite.draw(batch);
         player2_sprite.draw(batch);
@@ -124,6 +146,7 @@ public class Scene implements Screen{
         health2_sprite.draw(batch);
         batch.end();
         this.handleTouch();
+
     }
 
     @Override
@@ -155,42 +178,195 @@ public class Scene implements Screen{
         player1.dispose();
         player2.dispose();
     }
-    public void handleTouch(){
-        if(Gdx.input.justTouched()) {
-            coord.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            cam.unproject(coord);
+    public void handleTouch() {
+        float range;
+        double velocity;
+        float range2;
+        double velocity2;
+        float w = Gdx.graphics.getWidth();
+        float h = Gdx.graphics.getHeight();
+        sr=new ShapeRenderer();
+        sr.setAutoShapeType(true);
+        sr.begin(ShapeRenderer.ShapeType.Filled);
+        sr.setColor(Color.YELLOW);
+        sr.rect(0.08f*w,0.05f*h,(float)0.15*w,(float)0.05*h);
+        sr.setColor(Color.YELLOW);
+        sr.rect(0.76f*w,0.05f*h,(float)0.15*w,(float)0.05*h);
+        sr.end();
+            if(Gdx.input.justTouched()) {
+                coord.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+                cam.unproject(coord);
 
-            float touch_x = coord.x;
-            float touch_y = coord.y;
+                float touch_x = coord.x;
+                float touch_y = coord.y;
 
-            if (touch_x >= pause_sprite.getX() && touch_x <= (pause_sprite.getX() + pause_sprite.getWidth()) && touch_y >= pause_sprite.getY() && touch_y <= (pause_sprite.getY() + pause_sprite.getHeight())) {
-                game.setScreen(new PauseMenu(game));
+                if (touch_x >= pause_sprite.getX() && touch_x <= (pause_sprite.getX() + pause_sprite.getWidth()) && touch_y >= pause_sprite.getY() && touch_y <= (pause_sprite.getY() + pause_sprite.getHeight())) {
+                    game.setScreen(new PauseMenu(game));
+                }
             }
-        }
-        if(this.turn == 1){
-            if(Gdx.input.isKeyPressed(Input.Keys.D)){
-                float slope = myground.getPoints_y().get((int) (2*p1.getTank_chosen().getX())) - myground.getPoints_y().get((int) (2*p1.getTank_chosen().getX()-1));
-                float derivative = (float) Math.atan(slope);
-                player1_sprite.setRotation((float) Math.toDegrees(derivative));
-                player1_sprite.setOrigin(0,0);
-                p1.getTank_chosen().setX(p1.getTank_chosen().getX()+0.5f);
-                p1.getTank_chosen().setY(myground.getPoints_y().get((int) (2*p1.getTank_chosen().getX())));
-                player1_sprite.setPosition((float) (p1.getTank_chosen().getX()-0.01*player1_sprite.getWidth()), p1.getTank_chosen().getY());
+
+            if(this.turn == 1){
+                try{
+                    if(Gdx.input.isKeyPressed(Input.Keys.D)){
+                        float slope = myground.getPoints_y().get((int) (2*p1.getTank_chosen().getX())) - myground.getPoints_y().get((int) (2*p1.getTank_chosen().getX()-1));
+                        float derivative = (float) Math.atan(slope);
+                        player1_sprite.setRotation((float) Math.toDegrees(derivative));
+                        player1_sprite.setOrigin(0,0);
+                        p1.getTank_chosen().setX(p1.getTank_chosen().getX()+0.5f);
+                        p1.getTank_chosen().setY(myground.getPoints_y().get((int) (2*p1.getTank_chosen().getX())));
+                        if(p1.getTank_chosen().getX()>=myground.getPoints_x().size()-1){
+                            throw new MoveException("Tank out of screen");
+                        }
+                        player1_sprite.setPosition((float) (p1.getTank_chosen().getX()-0.01*player1_sprite.getWidth()), p1.getTank_chosen().getY());
+                    }
+                    if(Gdx.input.isKeyPressed(Input.Keys.A) && p1.getTank_chosen().getX()>1){
+                        float slope = myground.getPoints_y().get((int) (2*p1.getTank_chosen().getX())) - myground.getPoints_y().get((int) (2*p1.getTank_chosen().getX()-1));
+                        float derivative = (float) Math.atan(slope);
+                        player1_sprite.setRotation((float) Math.toDegrees(derivative));
+                        player1_sprite.setOrigin(0,0);
+                        p1.getTank_chosen().setX(p1.getTank_chosen().getX()-0.5f);
+                        p1.getTank_chosen().setY(myground.getPoints_y().get((int) (2*p1.getTank_chosen().getX())));
+                        if(p1.getTank_chosen().getX()>=myground.getPoints_x().size()-1){
+                            throw new MoveException("Tank out of screen");
+                        }
+                        player1_sprite.setPosition((float) (p1.getTank_chosen().getX()-0.01*player1_sprite.getWidth()), p1.getTank_chosen().getY());
+                    }
+                }catch (Exception MoveException){
+                    p1.getTank_chosen().setX(p1.getTank_chosen().getX()-0.5f);
+                }if(Gdx.input.isKeyJustPressed(Input.Keys.W) && angle<22){
+                    angle+=1;
+                    System.out.println("Upper key " + angle);
+                }
+                else if(Gdx.input.isKeyJustPressed(Input.Keys.S) && angle>4){
+                    angle-=1;
+                    System.out.println("Lower key " + angle);
+                }
+                if(Gdx.input.isKeyPressed(Input.Keys.ENTER) ) {
+                    float pos=p1.getTank_chosen().getX()+player1.getWidth()/16;
+                    ArrayList<Float> pts = myground.getPoints_y();
+                    range = w - pos;
+                    velocity = Math.pow(range * 10, 0.5);
+                    double fin = velocity * velocity * Math.sin(2 * Math.toRadians(angle)) / 10;
+                    int points = 4;
+                    Vector2[] controlPoints = new Vector2[points];
+                    float x =  (pos );
+                    float y = (player1.getHeight()/16+pts.get((int) (2*pos )));
+                    Vector2 point = new Vector2(x, y);
+                    controlPoints[0] = point;
+                    float x1 = (float) (pos + (fin) / 3);
+                    float y1 = pts.get((int) ( 2*(pos + (fin) / 3))) + h / 3;
+                    Vector2 point1 = new Vector2(x1, y1);
+                    controlPoints[1] = point1;
+                    float x2 = (float) (pos + 2 * (fin) / 3);
+                    float y2 = pts.get((int) ( 2*(pos + 2 * (fin) / 3))) + h / 3;
+                    Vector2 point2 = new Vector2(x2, y2);
+                    controlPoints[2] = point2;
+                    float x3 = (float) (pos + fin);
+                    float y3 = (pts.get((int) ( 2*(pos + fin))));
+                    Vector2 point3 = new Vector2(x3, y3);
+                    controlPoints[3] = point3;
+
+                    path1 = new Bezier<>(controlPoints);
+                    // setup ShapeRenderer
+                    sr = new ShapeRenderer();
+                    sr.setAutoShapeType(true);
+                    for (int i = 0; i < 100; i += 5) {
+                        float t = i / 100f;
+                        Vector2 st = new Vector2();
+                        Vector2 end = new Vector2();
+                        path1.valueAt(st, t + 0.01f);
+                        path1.valueAt(end, t - 0.01f);
+                        sr.begin();
+                        Gdx.gl.glLineWidth(2);
+                        //sr.setColor(1, 0.53f, 0.53f, 1);
+                        sr.line(st.x, st.y, end.x, end.y);
+                        sr.line(st.x, st.y, end.x, end.y);
+                        sr.end();
+                    }
+                }
+                turn = 2;
             }
-            turn = 2;
-        }
-        else if(this.turn == 2){
-            if(Gdx.input.isKeyPressed(Input.Keys.A)){
-                float slope = myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX())) - myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX()-1));
-                float derivative = (float) Math.atan(slope);
-                player2_sprite.setRotation((float) Math.toDegrees(derivative));
-                player2_sprite.setOrigin(0,0);
-                p2.getTank_chosen().setX(p2.getTank_chosen().getX()-0.5f);
-                p2.getTank_chosen().setY(myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX())));
-                player2_sprite.setPosition((float) (p2.getTank_chosen().getX()-0.01*player2_sprite.getWidth()), p2.getTank_chosen().getY());
+            else if(this.turn == 2){
+                try{
+                    if(Gdx.input.isKeyPressed(Input.Keys.LEFT)&& p2.getTank_chosen().getX()>1){
+                        float slope = myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX())) - myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX()-1));
+                        float derivative = (float) Math.atan(slope);
+                        player2_sprite.setRotation((float) Math.toDegrees(derivative));
+                        player2_sprite.setOrigin(0,0);
+                        p2.getTank_chosen().setX(p2.getTank_chosen().getX()-0.5f);
+                        p2.getTank_chosen().setY(myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX())));
+                        if(p1.getTank_chosen().getX()>=myground.getPoints_x().size()-1){
+                            throw new MoveException("Tank out of screen");
+                        }
+                        player2_sprite.setPosition((float) (p2.getTank_chosen().getX()-0.01*player2_sprite.getWidth()), p2.getTank_chosen().getY());
+                    }
+                    if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+                        float slope = myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX())) - myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX()-1));
+                        float derivative = (float) Math.atan(slope);
+                        player2_sprite.setRotation((float) Math.toDegrees(derivative));
+                        player2_sprite.setOrigin(0,0);
+                        p2.getTank_chosen().setX(p2.getTank_chosen().getX()+0.5f);
+                        p2.getTank_chosen().setY(myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX())));
+                        if(p1.getTank_chosen().getX()>=myground.getPoints_x().size()-1){
+                            throw new MoveException("Tank out of screen");
+                        }
+                        player2_sprite.setPosition((float) (p2.getTank_chosen().getX()-0.01*player2_sprite.getWidth()), p2.getTank_chosen().getY());
+                    }
+                }catch (Exception MoveException){
+                    p2.getTank_chosen().setX(p2.getTank_chosen().getX()-0.5f);
+                }if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && angle2 < 22) {
+                    angle2 += 1;
+                    System.out.println("Upper key " + angle2);
+                } else if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) && angle2 > 4) {
+                    angle2 -= 1;
+                    System.out.println("Lower key " + angle2);
+                }
+                if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+                    float pos2=p2.getTank_chosen().getX()+player2.getWidth()/16;
+                    ArrayList<Float> pts = myground.getPoints_y();
+                    range2 = w - pos2;
+                    velocity2 = Math.pow(range2 * 10, 0.5);
+                    double fin2 = velocity2 * velocity2 * Math.sin(2 * Math.toRadians(angle2)) / 10;
+                    int points2 = 4;
+                    Vector2[] controlPoints2 = new Vector2[points2];
+                    float a = (pos2);
+                    float b = (pts.get((int) ( 2*pos2)));
+                    Vector2 point01 = new Vector2(a, b);
+                    controlPoints2[0] = point01;
+                    float a1 = (float) (pos2 - (fin2) / 3);
+                    float b1 = pts.get((int) (2*(pos2 - (fin2) / 3))) + h / 5;
+                    Vector2 point02 = new Vector2(a1, b1);
+                    controlPoints2[1] = point02;
+                    float a2 = (float) (pos2 - 2 * (fin2) / 3);
+                    float b2 = pts.get((int) ( 2*(pos2 - 2 * (fin2) / 3))) + h / 5;
+                    Vector2 point03 = new Vector2(a2, b2);
+                    controlPoints2[2] = point03;
+                    float a3 = (float) (pos2 - fin2);
+                    float b3 = (pts.get((int) ( 2*(pos2 - fin2))));
+                    Vector2 point04 = new Vector2(a3, b3);
+                    controlPoints2[3] = point04;
+
+                    path1 = new Bezier<Vector2>(controlPoints2);
+                    sr = new ShapeRenderer();
+                    sr.setAutoShapeType(true);
+                    for (int i = 0; i < 100; i += 5) {
+                        float t = i / 100f;
+                        Vector2 st = new Vector2();
+                        Vector2 end = new Vector2();
+                        path1.valueAt(st, t + 0.01f);
+                        path1.valueAt(end, t - 0.01f);
+
+                        sr.begin();
+                        Gdx.gl.glLineWidth(2);
+                        sr.line(st.x, st.y, end.x, end.y);
+                        sr.line(st.x, st.y, end.x, end.y);
+                        sr.end();
+                    }
+                }
+
+                turn = 1;
             }
-            turn = 1;
-        }
+
     }
 }
 
