@@ -2,6 +2,9 @@ package com.mygdx.game;
 
 import com.mygdx.game.Tanks.Tank;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Player {
     private String status;
     private Tank tank_chosen;
@@ -9,7 +12,18 @@ public class Player {
     private String tank_status;
     private int health_dynamic;
 
-    public Player(String x, String tank_status, Tank y){
+    //Implemented flyweight design pattern
+
+    private static Map<String, Player> instances = new HashMap<>();
+
+    public static Player getInstance(String x, String tank_status, Tank y){
+        String key = x + " " + tank_status + " " + y;
+        if(!instances.containsKey(key)){
+            instances.put(key, new Player(x, tank_status, y));
+        }
+        return instances.get(key);
+    }
+    private Player(String x, String tank_status, Tank y){
         this.status = x;
         this.tank_status = tank_status;
         this.tank_chosen = y;

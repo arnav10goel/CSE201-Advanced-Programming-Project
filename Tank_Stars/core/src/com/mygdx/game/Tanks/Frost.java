@@ -5,7 +5,7 @@ import com.mygdx.game.Tanks.Tank;
 public class Frost extends Tank {
 
     public Frost() {
-        super(800);
+        super(800, 15);
     }
 
     @Override
@@ -26,6 +26,21 @@ public class Frost extends Tank {
     @Override
     public int getHealth_points() {
         return super.getHealth_points();
+    }
+
+    @Override
+    public void setHealth_points(int health_points) {
+        super.setHealth_points(health_points);
+    }
+
+    @Override
+    public void setFuel(int fuel) {
+        super.setFuel(fuel);
+    }
+
+    @Override
+    public int getFuel() {
+        return super.getFuel();
     }
 
     @Override
