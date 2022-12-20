@@ -4,7 +4,7 @@ import com.mygdx.game.Tanks.Tank;
 
 public class Spectre extends Tank {
     public Spectre() {
-        super(1000, 250);
+        super(1050, 250);
     }
 
     @Override

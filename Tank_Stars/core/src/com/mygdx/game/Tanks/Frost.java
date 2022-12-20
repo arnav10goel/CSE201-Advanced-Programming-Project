@@ -5,7 +5,7 @@ import com.mygdx.game.Tanks.Tank;
 public class Frost extends Tank {
 
     public Frost() {
-        super(800, 250);
+        super(900, 250);
     }
 
     @Override

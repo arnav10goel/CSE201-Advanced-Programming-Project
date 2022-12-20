@@ -47,6 +47,7 @@ public class Scene implements Screen{
     private final Ground myground;
     private final ShapeRenderer sr;
     private final ShapeRenderer fuelrenderer;
+    private final ShapeRenderer hr;
     private int count;
     private float range;
     private double velocity;
@@ -58,9 +59,12 @@ public class Scene implements Screen{
     private float fuel2;
     private double fin;
     private double fin2;
+    private float h1=0;
+    private float h2=0;
     private Bezier<Vector2> path1;
     public Scene(MyGdxGame game, @NotNull Player p1, Player p2) {
         this.sr = new ShapeRenderer();
+        this.hr = new ShapeRenderer();
         this.fuelrenderer = new ShapeRenderer();
         this.myground = Ground.getInstance(); //Using Singleton Design Pattern to make the ground
         Scene.game = game;
@@ -74,6 +78,8 @@ public class Scene implements Screen{
         img_sprite.setSize(w,h);
         fuel1=(float)0.15*w;
         fuel2=(float)0.15*w;
+        h1=(w/5)-10;
+        h2=(w/5)-10;
         angle = 4;
         angle2 = 4;
 
@@ -122,7 +128,6 @@ public class Scene implements Screen{
         player1_sprite.setPosition(0.08f*w, this.myground.getPoints_y().get((int) (0.16f*w)));
         player2_sprite.setPosition(0.75f*w, this.myground.getPoints_y().get((int) (1.5f*w)));
         pause_sprite.setPosition(85*w/2550, 1000*h/1180);
-
         Texture player1won = new Texture("player1_won.png");
         Texture player2won = new Texture("player2_won.png");
         player1_won = new Sprite(player1won);
@@ -157,12 +162,19 @@ public class Scene implements Screen{
         fuelrenderer.setColor(0,0,0,1);
         fuelrenderer.rect(0.76f*w,0.05f*h,(float)0.15*w,(float)0.05*h);
         fuelrenderer.end();
+        hr.setAutoShapeType(true);
+        hr.begin(ShapeRenderer.ShapeType.Filled);
+        hr.setColor(Color.DARK_GRAY);
+        hr.rect((3*w/10)-(w/15),951*h/1180,w/5, h/10);
+        hr.setColor(Color.DARK_GRAY);
+        hr.rect((w/2)+(w/15),951*h/1180,w/5, h/10);
+        hr.end();
         batch.begin();
         player1_sprite.draw(batch);
         player2_sprite.draw(batch);
         pause_sprite.draw(batch);
-        health1_sprite.draw(batch);
-        health2_sprite.draw(batch);
+//        health1_sprite.draw(batch);
+//        health2_sprite.draw(batch);
         batch.end();
         try {
             this.handleTouch();
@@ -212,6 +224,13 @@ public class Scene implements Screen{
         fsr.setColor(Color.YELLOW);
         fsr.rect(0.76f*w,0.05f*h,fuel2,(float)0.05*h);
         fsr.end();
+        hr.setAutoShapeType(true);
+        hr.begin(ShapeRenderer.ShapeType.Filled);
+        hr.setColor(Color.TEAL);
+        hr.rect((3*w/10)-(w/15)+5,951*h/1180+5,h1, -10+h/10);
+        hr.setColor(Color.TEAL);
+        hr.rect((w/2)+(w/15)+5,951*h/1180+5,h2, -10+h/10);
+        hr.end();
 
         if(Gdx.input.justTouched()) {
             coord.set(Gdx.input.getX(), Gdx.input.getY(), 0);
@@ -309,9 +328,29 @@ public class Scene implements Screen{
                     if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
                         if (Math.abs(p2.getTank_chosen().getX() - p1.getTank_chosen().getX() - fin) <= 10 + player1.getWidth() / 16) {
                             p2.getTank_chosen().setHealth_points(p2.getTank_chosen().getHealth_points() - 150);
+                            System.out.println(750-p2.getTank_chosen().getHealth_points());
+//                            p2.getTank_chosen().setX(p2.getTank_chosen().getX()-10);
+//                            p2.getTank_chosen().setY(myground.getPoints_y().get((int) (2 * p2.getTank_chosen().getX())));
+//                            if (p2.getTank_chosen().getX() >= myground.getPoints_x().size() - 1) {
+//                                throw new MoveException("Tank out of screen");
+//                            }
+//                            player1_sprite.setPosition((float) (p2.getTank_chosen().getX() - 0.01 * player2_sprite.getWidth()), p2.getTank_chosen().getY());
+                            switch (p2.getTank_status()){
+                                case "Buratino_P2":
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/750)*(h2);
+                                    break;
+                                case "Frost_P2":
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/900)*(h2);
+                                    break;
+                                case "Spectre_P2":
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/1050)*(h2);
+                                    break;
+                            }
                         }
+
                         turn = 2;
                         p2.getTank_chosen().setFuel(250);
+                        fuel2=(float)0.15*w;
                         System.out.println(p2.getTank_chosen().getHealth_points());
                         System.out.println("fin:" + fin);
                         System.out.println(p2.getTank_chosen().getX());
@@ -405,10 +444,29 @@ public class Scene implements Screen{
                     if (Gdx.input.isKeyJustPressed(Input.Keys.ALT_RIGHT)) {
                         if (Math.abs(p2.getTank_chosen().getX() - p1.getTank_chosen().getX() - fin2) <= 10 + player1.getWidth() / 16) {
                             p1.getTank_chosen().setHealth_points(p1.getTank_chosen().getHealth_points() - 150);
+                            System.out.println((750-p1.getTank_chosen().getHealth_points()));
+//                            p1.getTank_chosen().setX(p1.getTank_chosen().getX()-10);
+//                            p1.getTank_chosen().setY(myground.getPoints_y().get((int) (2 * p1.getTank_chosen().getX())));
+//                            if (p1.getTank_chosen().getX() >= myground.getPoints_x().size() - 1) {
+//                                throw new MoveException("Tank out of screen");
+//                            }
+//                            player1_sprite.setPosition((float) (p1.getTank_chosen().getX() - 0.01 * player1_sprite.getWidth()), p1.getTank_chosen().getY());
+                            switch (p1.getTank_status()){
+                                case "Buratino_P1":
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h1);
+                                    break;
+                                case "Frost_P1":
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/900)*(h1);
+                                    break;
+                                case "Spectre_P1":
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/1050)*(h1);
+                                    break;
+                            }
 
                         }
                         turn = 1;
                         p1.getTank_chosen().setFuel(250);
+                        fuel1=(float)0.15*w;
                         System.out.println(p1.getTank_chosen().getHealth_points());
                         System.out.println("fin2:" + fin2);
                         System.out.println("xp1:" + p1.getTank_chosen().getX());
