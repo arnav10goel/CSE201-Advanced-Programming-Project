@@ -162,17 +162,17 @@ public class ChoiceScreen implements Screen {
                     switch (this.status) {
                         case "Buratino_P1":
                             Tank tank_new = new Buratino();
-                            Player current_player = new Player("Player1", tank_new);
+                            Player current_player = new Player("Player1", "Buratino_P1", tank_new);
                             ChoiceScreen.players.add(current_player);
                             break;
                         case "Frost_P1":
                             Tank tank_new2 = new Frost();
-                            Player current_player2 = new Player("Player1", tank_new2);
+                            Player current_player2 = new Player("Player1", "Frost_P1", tank_new2);
                             ChoiceScreen.players.add(current_player2);
                             break;
                         case "Spectre_P1":
                             Tank tank_new3 = new Spectre();
-                            Player current_player3 = new Player("Player1", tank_new3);
+                            Player current_player3 = new Player("Player1", "Spectre_P1", tank_new3);
                             ChoiceScreen.players.add(current_player3);
                             break;
                     }
@@ -182,21 +182,21 @@ public class ChoiceScreen implements Screen {
                     switch (this.getStatus()) {
                         case "Buratino_P2":
                             Tank tank_new = new Buratino();
-                            Player current_player = new Player("Player2", tank_new);
+                            Player current_player = new Player("Player2", "Buratino_P2", tank_new);
                             ChoiceScreen.players.add(current_player);
                             break;
                         case "Frost_P2":
                             Tank tank_new2 = new Frost();
-                            Player current_player2 = new Player("Player2", tank_new2);
+                            Player current_player2 = new Player("Player2", "Frost_P2", tank_new2);
                             ChoiceScreen.players.add(current_player2);
                             break;
                         case "Spectre_P2":
                             Tank tank_new3 = new Spectre();
-                            Player current_player3 = new Player("Player2", tank_new3);
+                            Player current_player3 = new Player("Player2", "Spectre_P2", tank_new3);
                             ChoiceScreen.players.add(current_player3);
                             break;
                     }
-                    game.setScreen(new Scene(game));
+                    game.setScreen(new Scene(game, ChoiceScreen.players.get(0), ChoiceScreen.players.get(1)));
                 }
             }
         }

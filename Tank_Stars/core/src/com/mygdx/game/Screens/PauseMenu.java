@@ -134,7 +134,7 @@ public class PauseMenu implements Screen{
     }
     public void handleTouch(){
         if(Gdx.input.justTouched()) {
-            game.setScreen(new Scene(game));
+            game.setScreen(new Scene(game, ChoiceScreen.players.get(0), ChoiceScreen.players.get(1)));
         }
     }
 }
