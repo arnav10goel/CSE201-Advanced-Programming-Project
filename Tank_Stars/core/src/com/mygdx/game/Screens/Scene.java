@@ -16,9 +16,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Ground;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Player;
-import com.mygdx.game.Screens.PauseMenu;
 import org.jetbrains.annotations.NotNull;
 
+import java.security.Key;
 import java.util.ArrayList;
 
 public class Scene implements Screen{
@@ -45,9 +45,17 @@ public class Scene implements Screen{
     private final Ground myground;
     private final ShapeRenderer sr;
     private final ShapeRenderer fuelrenderer;
-
+    private int count;
+    private float range;
+    private double velocity;
+    private float range2;
+    private double velocity2;
     private int angle;
     private int angle2;
+    private float fuel1;
+    private float fuel2;
+    private double fin;
+    private double fin2;
     private Bezier<Vector2> path1;
     public Scene(MyGdxGame game, @NotNull Player p1, Player p2) {
         this.sr = new ShapeRenderer();
@@ -62,7 +70,8 @@ public class Scene implements Screen{
         img = new Texture(Gdx.files.internal("back_scene.png"));
         img_sprite = new Sprite(img);
         img_sprite.setSize(w,h);
-
+        fuel1=(float)0.15*w;
+        fuel2=(float)0.15*w;
         angle = 4;
         angle2 = 4;
 
@@ -182,19 +191,15 @@ public class Scene implements Screen{
         player2.dispose();
     }
     public void handleTouch(){
-        float range;
-        double velocity;
-        float range2;
-        double velocity2;
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
         ShapeRenderer fsr = new ShapeRenderer();
         fsr.setAutoShapeType(true);
         fsr.begin(ShapeRenderer.ShapeType.Filled);
         fsr.setColor(Color.YELLOW);
-        fsr.rect(0.08f*w,0.05f*h,(float)0.15*w,(float)0.05*h);
+        fsr.rect(0.08f*w,0.05f*h,fuel1,(float)0.05*h);
         fsr.setColor(Color.YELLOW);
-        fsr.rect(0.76f*w,0.05f*h,(float)0.15*w,(float)0.05*h);
+        fsr.rect(0.76f*w,0.05f*h,fuel2,(float)0.05*h);
         fsr.end();
 
         if(Gdx.input.justTouched()) {
@@ -213,6 +218,7 @@ public class Scene implements Screen{
                 if (Gdx.input.isKeyPressed(Input.Keys.D) && p1.getTank_chosen().getFuel() > 1) {
                     float slope = myground.getPoints_y().get((int) (2 * p1.getTank_chosen().getX())) - myground.getPoints_y().get((int) (2 * p1.getTank_chosen().getX() - 1));
                     float derivative = (float) Math.atan(slope);
+                    fuel1= (float) (fuel1-0.36272);
                     player1_sprite.setRotation((float) Math.toDegrees(derivative));
                     player1_sprite.setOrigin(0, 0);
                     p1.getTank_chosen().setX(p1.getTank_chosen().getX() + 0.5f);
@@ -226,6 +232,7 @@ public class Scene implements Screen{
                 if (Gdx.input.isKeyPressed(Input.Keys.A) && p1.getTank_chosen().getX() > 1 && p1.getTank_chosen().getFuel() > 1) {
                     float slope = myground.getPoints_y().get((int) (2 * p1.getTank_chosen().getX())) - myground.getPoints_y().get((int) (2 * p1.getTank_chosen().getX() - 1));
                     float derivative = (float) Math.atan(slope);
+                    fuel1= (float) (fuel1-0.36272);
                     player1_sprite.setRotation((float) Math.toDegrees(derivative));
                     player1_sprite.setOrigin(0, 0);
                     p1.getTank_chosen().setX(p1.getTank_chosen().getX() - 0.5f);
@@ -249,7 +256,7 @@ public class Scene implements Screen{
                     ArrayList<Float> pts = myground.getPoints_y();
                     range = w - pos;
                     velocity = Math.pow(range * 10, 0.5);
-                    double fin = velocity * velocity * Math.sin(2 * Math.toRadians(angle)) / 10;
+                    fin = velocity * velocity * Math.sin(2 * Math.toRadians(angle)) / 10;
                     int points = 4;
                     Vector2[] controlPoints = new Vector2[points];
                     float x = (pos);
@@ -287,6 +294,15 @@ public class Scene implements Screen{
                         srt.end();
                     }
                 }
+                if(Gdx.input.isKeyJustPressed(Input.Keys.F)){
+                    if(Math.abs(p2.getTank_chosen().getX()-p1.getTank_chosen().getX()-fin) <=10+player1.getWidth()/16){
+                        p2.getTank_chosen().setHealth_points(p2.getTank_chosen().getHealth_points()-150);
+                    }
+                    System.out.println(p2.getTank_chosen().getHealth_points());
+                    System.out.println("fin:"+fin);
+                    System.out.println(p2.getTank_chosen().getX());
+                    System.out.println(p1.getTank_chosen().getX());
+                }
 
                 turn = 2;
             }
@@ -299,6 +315,10 @@ public class Scene implements Screen{
                 if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && p2.getTank_chosen().getX() > 1 && p2.getTank_chosen().getFuel() > 1) {
                     float slope = myground.getPoints_y().get((int) (2 * p2.getTank_chosen().getX())) - myground.getPoints_y().get((int) (2 * p2.getTank_chosen().getX() - 1));
                     float derivative = (float) Math.atan(slope);
+                    fuel2= (float) (fuel2-0.36272);
+                    count+=1;
+                    System.out.println(count);
+                    System.out.println(fuel2);
                     player2_sprite.setRotation((float) Math.toDegrees(derivative));
                     player2_sprite.setOrigin(0, 0);
                     p2.getTank_chosen().setX(p2.getTank_chosen().getX() - 0.5f);
@@ -312,6 +332,7 @@ public class Scene implements Screen{
                 if(Gdx.input.isKeyPressed(Input.Keys.RIGHT) && p2.getTank_chosen().getFuel() > 1){
                     float slope = myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX())) - myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX()-1));
                     float derivative = (float) Math.atan(slope);
+                    fuel2= (float) (fuel2-0.36272);
                     player2_sprite.setRotation((float) Math.toDegrees(derivative));
                     player2_sprite.setOrigin(0,0);
                     p2.getTank_chosen().setX(p2.getTank_chosen().getX()+0.5f);
@@ -335,7 +356,7 @@ public class Scene implements Screen{
                     ArrayList<Float> pts = myground.getPoints_y();
                     range2 = w - pos2;
                     velocity2 = Math.pow(range2 * 10, 0.5);
-                    double fin2 = velocity2 * velocity2 * Math.sin(2 * Math.toRadians(angle2)) / 10;
+                    fin2 = velocity2 * velocity2 * Math.sin(2 * Math.toRadians(angle2)) / 10;
                     int points2 = 4;
                     Vector2[] controlPoints2 = new Vector2[points2];
                     float a = (pos2);
@@ -371,6 +392,14 @@ public class Scene implements Screen{
                         sr2.line(st.x, st.y, end.x, end.y);
                         sr2.end();
                     }
+                }if(Gdx.input.isKeyJustPressed(Input.Keys.ALT_RIGHT)){
+                    if(Math.abs(p2.getTank_chosen().getX()-p1.getTank_chosen().getX()-fin2) <= 10+player1.getWidth()/16){
+                        p1.getTank_chosen().setHealth_points(p1.getTank_chosen().getHealth_points()-150);
+
+                    }System.out.println(p1.getTank_chosen().getHealth_points());
+                    System.out.println("fin2:"+fin2);
+                    System.out.println("xp1:" + p1.getTank_chosen().getX());
+                    System.out.println("xp2:" + p2.getTank_chosen().getX());
                 }
 
                 turn = 1;

@@ -3,7 +3,7 @@ package com.mygdx.game.Tanks;
 public class Buratino extends Tank {
 
     public Buratino() {
-        super(750, 10);
+        super(750, 250);
     }
 
     @Override
