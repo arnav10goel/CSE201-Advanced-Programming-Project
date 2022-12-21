@@ -1,11 +1,16 @@
 package com.mygdx.game.Tanks;
 
-public abstract class Tank {
+import org.jetbrains.annotations.NotNull;
+
+import java.io.Serializable;
+
+public abstract class Tank implements Cloneable, Serializable {
     private int health_points;
 
     private float x;
     private float y;
     private int fuel;
+    private static Tank p1_chosen;
 
     Tank(int x, int fuel){
         this.health_points = x;
@@ -52,4 +57,23 @@ public abstract class Tank {
     public int getHealth_points() {
         return health_points;
     }
+
+    public static Tank getP1_chosen() {
+        return p1_chosen;
+    }
+
+    public static void setP1_chosen(@NotNull Tank p1_chosen) {
+        Tank.p1_chosen = p1_chosen.clone();
+    }
+
+    public Tank clone(){
+        try{
+            Tank copy = (Tank)super.clone();
+            return copy;
+        }
+        catch (CloneNotSupportedException e) {
+            return null;
+        }
+    }
+
 }

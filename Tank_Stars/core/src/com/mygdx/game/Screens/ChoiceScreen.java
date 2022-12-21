@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Ground;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Player;
 import com.mygdx.game.Tanks.Buratino;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 public class ChoiceScreen implements Screen {
 
     private SpriteBatch batch;
+    private Ground myGround;
     private Texture img;
     private Sprite img_sprite;
     private Texture choose;
@@ -28,13 +30,19 @@ public class ChoiceScreen implements Screen {
     private Sprite left_arrow_sprite;
 
     private Texture right_arrow;
+
+    private Tank tanktobesaved_p1;
+    private Tank tanktobesaved_p2;
     private Sprite right_arrow_sprite;
+    private Player player1 = null;
+    private Player player2 = null;
 
     static MyGdxGame game;
 
     static ArrayList<Player> players = new ArrayList<>();
     private Vector3 coord;
     private OrthographicCamera cam;
+    private float w;
 
     private String status;
 
@@ -65,6 +73,7 @@ public class ChoiceScreen implements Screen {
         this.coord = new Vector3();
         this.cam = new OrthographicCamera();
         this.cam.setToOrtho(false);
+        this.w = Gdx.graphics.getWidth();
     }
     @Override
     public void show() {
@@ -158,47 +167,69 @@ public class ChoiceScreen implements Screen {
                 }
             }
             else if (touch_x >= choose_sprite.getX() && touch_x <= (choose_sprite.getX() + choose_sprite.getWidth()) && touch_y >= choose_sprite.getY() && touch_y <= (choose_sprite.getY() + choose_sprite.getHeight())){
+                myGround = Ground.getInstance(); //Using Singleton Design Pattern to make the ground
                 if(this.getStatus().equals("Buratino_P1") || this.getStatus().equals("Frost_P1") || this.getStatus().equals("Spectre_P1")){
-                    switch (this.status) {
-                        case "Buratino_P1":
-                            Tank tank_new = new Buratino();
-                            Player current_player = Player.getInstance("Player1", "Buratino_P1", tank_new);
-                            ChoiceScreen.players.add(current_player);
-                            break;
-                        case "Frost_P1":
-                            Tank tank_new2 = new Frost();
-                            Player current_player2 = Player.getInstance("Player1", "Frost_P1", tank_new2);
-                            ChoiceScreen.players.add(current_player2);
-                            break;
-                        case "Spectre_P1":
-                            Tank tank_new3 = new Spectre();
-                            Player current_player3 = Player.getInstance("Player1", "Spectre_P1", tank_new3);
-                            ChoiceScreen.players.add(current_player3);
-                            break;
-                    }
+                    Tank.setP1_chosen(TankChooser(this.getStatus()).clone());
                     game.setScreen(new ChoiceScreen(game, "Buratino_P2.png", "Buratino_P2"));
                 }
                 else{
-                    switch (this.getStatus()) {
-                        case "Buratino_P2":
-                            Tank tank_new = new Buratino();
-                            Player current_player = Player.getInstance("Player2", "Buratino_P2", tank_new);
-                            ChoiceScreen.players.add(current_player);
-                            break;
-                        case "Frost_P2":
-                            Tank tank_new2 = new Frost();
-                            Player current_player2 = Player.getInstance("Player2", "Frost_P2", tank_new2);
-                            ChoiceScreen.players.add(current_player2);
-                            break;
-                        case "Spectre_P2":
-                            Tank tank_new3 = new Spectre();
-                            Player current_player3 = Player.getInstance("Player2", "Spectre_P2", tank_new3);
-                            ChoiceScreen.players.add(current_player3);
-                            break;
-                    }
-                    game.setScreen(new Scene(game, ChoiceScreen.players.get(0), ChoiceScreen.players.get(1)));
+                    this.player1 = Player.getP1();
+                    this.tanktobesaved_p1 = Tank.getP1_chosen();
+                    this.tanktobesaved_p1.setX(0.08f*w);
+                    this.tanktobesaved_p1.setY(this.myGround.getPoints_y().get((int) (0.16f*w)));
+                    System.out.println(tanktobesaved_p1);
+                    this.tanktobesaved_p2 = TankChooser(this.getStatus()).clone();
+                    System.out.println(tanktobesaved_p2);
+                    this.tanktobesaved_p2.setX(0.75f*w);
+                    this.tanktobesaved_p2.setY(this.myGround.getPoints_y().get((int) (1.5f*w)));
+                    game.setScreen(new Scene(game, this.player1, this.player2, myGround, tanktobesaved_p1, tanktobesaved_p2));
                 }
             }
         }
+    }
+
+    public Tank TankChooser(String status){
+        if(status.equals("Buratino_P1") || status.equals("Frost_P1") || status.equals("Spectre_P1")){
+            switch (this.status) {
+                case "Buratino_P1":
+                    Tank tank_new = new Buratino();
+                    this.player1 = Player.getInstance("Player1", "Buratino_P1", tank_new); //Flyweight Design Pattern
+                    Player.setP1(this.player1);
+                    ChoiceScreen.players.add(player1);
+                    return tank_new;
+                case "Frost_P1":
+                    Tank tank_new2 = new Frost();
+                    this.player1 = Player.getInstance("Player1", "Frost_P1", tank_new2); //Flyweight Design Pattern
+                    Player.setP1(this.player1);
+                    ChoiceScreen.players.add(player1);
+                    return tank_new2;
+                case "Spectre_P1":
+                    Tank tank_new3 = new Spectre();
+                    this.player1 = Player.getInstance("Player1", "Spectre_P1", tank_new3); //Flyweight Design Pattern
+                    Player.setP1(this.player1);
+                    ChoiceScreen.players.add(player1);
+                    return tank_new3;
+            }
+        }
+        else{
+            switch (this.getStatus()) {
+                case "Buratino_P2":
+                    Tank tank_new = new Buratino();
+                    this.player2 = Player.getInstance("Player2", "Buratino_P2", tank_new); //Flyweight Design Pattern
+                    ChoiceScreen.players.add(player2);
+                    return tank_new;
+                case "Frost_P2":
+                    Tank tank_new2 = new Frost();
+                    this.player2 = Player.getInstance("Player2", "Frost_P2", tank_new2); //Flyweight Design Pattern
+                    ChoiceScreen.players.add(player2);
+                    return tank_new2;
+                case "Spectre_P2":
+                    Tank tank_new3 = new Spectre();
+                    this.player2 = Player.getInstance("Player2", "Spectre_P2", tank_new3); //Flyweight Design Pattern
+                    ChoiceScreen.players.add(player2);
+                    return tank_new3;
+            }
+        }
+        return null;
     }
 }

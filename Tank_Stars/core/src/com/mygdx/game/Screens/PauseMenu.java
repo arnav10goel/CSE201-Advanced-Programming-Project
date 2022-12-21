@@ -7,78 +7,58 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Ground;
 import com.mygdx.game.MyGdxGame;
+import com.mygdx.game.Player;
+import com.mygdx.game.Serialiser;
+import com.mygdx.game.Tanks.Tank;
+
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 public class PauseMenu implements Screen{
     private SpriteBatch batch;
-    private Texture player1;
-    private Sprite player1_sprite;
     private Texture pause_menu;
     private Sprite pause_menu_sprite;
-    private Texture player2;
-    private Sprite player2_sprite;
     private Texture img;
+    private static int ResumeFlag;
     private Sprite img_sprite;
-    private Texture ground;
-    private Sprite ground_sprite;
-    private Texture tank1;
-    private Sprite tank1_sprite;
 
     private Texture pause;
     private Sprite pause_sprite;
-    private Texture toggle;
-    private Sprite toggle_sprite;
-    private Texture health1;
-    private Sprite health1_sprite;
-    private Texture health2;
-    private Sprite health2_sprite;
+
+    private float w;
+    private float h;
+
     static MyGdxGame game;
     private Vector3 coord;
     private OrthographicCamera cam;
     public PauseMenu(MyGdxGame game) {
         this.game = game;
         batch = new SpriteBatch();
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
+        w = Gdx.graphics.getWidth();
+        h = Gdx.graphics.getHeight();
         img = new Texture(Gdx.files.internal("back_scene.png"));
         img_sprite = new Sprite(img);
         img_sprite.setSize(w,h);
-        ground = new Texture("land_scene.png");
-        player1 = new Texture("frost_player1.png");
-        player2 = new Texture("buratino_player2.png");
         pause = new Texture("pause.png");
         pause_sprite = new Sprite(pause);
-        player1_sprite = new Sprite(player1);
-        player2_sprite = new Sprite(player2);
-        health1 = new Texture("player1_health.png");
-        health2 = new Texture("player2_health.png");
-        health1_sprite = new Sprite(health1);
-        health2_sprite = new Sprite(health2);
         pause_menu = new Texture("pause_menu.png");
         pause_menu_sprite = new Sprite(pause_menu);
         pause_menu_sprite.setSize(pause_menu_sprite.getWidth()/4, pause_menu_sprite.getHeight()/4);
-        pause_menu_sprite.setPosition(851*w/2550, 260*h/1180);
-        health1_sprite.setSize(health1.getWidth()/5, health1.getHeight()/5);
-        health2_sprite.setSize(health2.getWidth()/5, health2.getHeight()/5);
-        health1_sprite.setPosition(434*w/2550, 951*h/1180);
-        health2_sprite.setPosition(1455*w/2550, 951*h/1180);
+        pause_menu_sprite.setPosition(810*w/2550, 260*h/1180);
+
         pause_sprite.setSize(pause.getWidth()/5, pause.getHeight()/5);
-        player1_sprite.setSize(player1.getWidth()/8, player1.getHeight()/8);
-        player2_sprite.setSize(player2.getWidth()/8, player2.getHeight()/8);
-        player1_sprite.setPosition(727*w/2550, 600*h/1180);
-        player2_sprite.setPosition(1859*w/2550, 620*h/1180);
         pause_sprite.setPosition(85*w/2550, 1000*h/1180);
-        ground_sprite = new Sprite(ground);
-        ground_sprite.setSize(ground.getWidth()/5, ground.getHeight()/5);
         //tank1 = new Texture("spec")
         //tank1_sprite = new Sprite(tank1);
-        toggle = new Texture("toggle.png");
-        toggle_sprite = new Sprite(toggle);
-        toggle_sprite.setSize(toggle.getWidth()/5, toggle.getHeight()/5);
-        toggle_sprite.setPosition(210*w/2550, 110*h/1180);
         this.coord = new Vector3();
         this.cam = new OrthographicCamera();
         this.cam.setToOrtho(false);
+        this.ResumeFlag = 0;
     }
 
     @Override
@@ -90,17 +70,16 @@ public class PauseMenu implements Screen{
     public void render(float delta) {
         batch.begin();
         img_sprite.draw(batch);
-        ground_sprite.draw(batch);
-
-        player1_sprite.draw(batch);
-        player2_sprite.draw(batch);
         pause_sprite.draw(batch);
-        toggle_sprite.draw(batch);
-        health1_sprite.draw(batch);
-        health2_sprite.draw(batch);
         pause_menu_sprite.draw(batch);
         batch.end();
-        handleTouch();
+        try {
+            handleTouch();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -128,14 +107,66 @@ public class PauseMenu implements Screen{
         batch.dispose();
         img.dispose();
         pause.dispose();
-        ground.dispose();
-        player1.dispose();
-        player2.dispose();
     }
-    public void handleTouch(){
+    public void handleTouch() throws IOException, ClassNotFoundException { // WILL CHANGE WHEN I WILL IMPLEMENT SERIALISATION
         if(Gdx.input.justTouched()) {
-            game.setScreen(new Scene(game, ChoiceScreen.players.get(0), ChoiceScreen.players.get(1)));
+            coord.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            cam.unproject(coord);
+
+            float touch_x = coord.x;
+            float touch_y = coord.y;
+            if(touch_x >= 1078*w/2550 && touch_x <= 1500*w/2550 && touch_y >= 630*h/1180 && touch_y <= 750*h/1180){ //RESUME BUTTON
+                Ground myground = null;
+                Player p1 = null;
+                Tank t1 = null;
+                Tank t2 = null;
+                Player p2 = null;
+                int val = Serialiser.getCount_saved_games();
+                FileInputStream filein_p1 = new FileInputStream("/Users/arnav/Desktop/LibGDX_Projects/Tank_Stars(do_edits_here)/assets/player1_1.ser");
+                FileInputStream filein_p2 = new FileInputStream("/Users/arnav/Desktop/LibGDX_Projects/Tank_Stars(do_edits_here)/assets/player2_1.ser");
+                FileInputStream filein_t1 = new FileInputStream("/Users/arnav/Desktop/LibGDX_Projects/Tank_Stars(do_edits_here)/assets/tank1_1.ser");
+                FileInputStream filein_t2 = new FileInputStream("/Users/arnav/Desktop/LibGDX_Projects/Tank_Stars(do_edits_here)/assets/tank2_1.ser");
+                FileInputStream filein_ground = new FileInputStream("/Users/arnav/Desktop/LibGDX_Projects/Tank_Stars(do_edits_here)/assets/ground1_1.ser");
+                ObjectInputStream in_p1 = new ObjectInputStream(filein_p1);
+                ObjectInputStream in_p2 = new ObjectInputStream(filein_p2);
+                ObjectInputStream in_t1 = new ObjectInputStream(filein_t1);
+                ObjectInputStream in_t2 = new ObjectInputStream(filein_t2);
+                ObjectInputStream in_ground = new ObjectInputStream(filein_ground);
+                p1 = (Player)in_p1.readObject();
+                p2 = (Player)in_p2.readObject();
+                t1 = (Tank)in_t1.readObject();
+                t2 = (Tank)in_t2.readObject();
+                myground = (Ground)in_ground.readObject();
+                in_p1.close();
+                in_p2.close();
+                in_t1.close();
+                in_t2.close();
+                in_ground.close();
+                filein_p1.close();
+                filein_p2.close();
+                filein_t1.close();
+                filein_t2.close();
+                filein_ground.close();
+                Serialiser.setCount_saved_games(Serialiser.getCount_saved_games()-1);
+                this.ResumeFlag = 1;
+                game.setScreen(new Scene(game, p1, p2, myground, t1, t2));
+            }
+            else if(touch_x >= 1078*w/2550 && touch_x <= 1500*w/2550 && touch_y >= 460*h/1180 && touch_y <= 580*h/1180){
+                Gdx.app.exit();
+            }
+            else if(touch_x >= 1078*w/2550 && touch_x <= 1500*w/2550 && touch_y >= 286*h/1180 && touch_y <= 410*h/1180){
+                game.setScreen(new MainMenu(game));
+            }
+
         }
+    }
+
+    public static int getResumeFlag() {
+        return ResumeFlag;
+    }
+
+    public static void setResumeFlag(int resumeFlag) {
+        ResumeFlag = resumeFlag;
     }
 }
 

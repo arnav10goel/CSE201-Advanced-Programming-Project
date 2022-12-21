@@ -1,16 +1,19 @@
 package com.mygdx.game;
 
 import com.mygdx.game.Tanks.Tank;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Player {
+public class Player implements Cloneable, Serializable {
     private String status;
     private Tank tank_chosen;
 
     private String tank_status;
     private int health_dynamic;
+    private static Player p1;
 
     //Implemented flyweight design pattern
 
@@ -46,8 +49,16 @@ public class Player {
         return tank_status;
     }
 
-    public void setTank_chosen(Tank tank_chosen) {
-        this.tank_chosen = tank_chosen;
+    public static Player getP1() {
+        return p1;
+    }
+
+    public static void setP1(Player p1) {
+        Player.p1 = p1;
+    }
+
+    public void setTank_chosen(@NotNull Tank tank_chosen) {
+        this.tank_chosen = tank_chosen.clone();
     }
 
     public void setStatus(String status) {
@@ -60,5 +71,15 @@ public class Player {
 
     public void setHealth_dynamic(int health_dynamic) {
         this.health_dynamic = health_dynamic;
+    }
+
+     public Player clone() {
+        try{
+            Player copy = (Player) super.clone();
+            return copy;
+        }
+        catch (CloneNotSupportedException e){
+            return null;
+        }
     }
 }

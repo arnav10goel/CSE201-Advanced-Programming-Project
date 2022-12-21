@@ -4,10 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 //Used Singleton Design Pattern
-public class Ground{
+public class Ground implements Serializable {
     private final ArrayList<Float> points_y = new ArrayList<>();
     private final ArrayList<Float> points_x = new ArrayList<>();
     private final int height;

@@ -1,8 +1,9 @@
 package com.mygdx.game.Tanks;
 
 import com.mygdx.game.Tanks.Tank;
+import org.jetbrains.annotations.NotNull;
 
-public class Spectre extends Tank {
+public class Spectre extends Tank implements Cloneable{
     public Spectre() {
         super(1050, 250);
     }
@@ -60,5 +61,11 @@ public class Spectre extends Tank {
     @Override
     public void setFuel(int fuel) {
         super.setFuel(fuel);
+    }
+
+
+    @Override
+    public Tank clone() {
+        return super.clone();
     }
 }

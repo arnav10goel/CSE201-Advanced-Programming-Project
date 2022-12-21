@@ -1,6 +1,8 @@
 package com.mygdx.game.Tanks;
 
-public class Buratino extends Tank {
+import org.jetbrains.annotations.NotNull;
+
+public class Buratino extends Tank implements Cloneable{
 
     public Buratino() {
         super(750, 250);
@@ -59,5 +61,11 @@ public class Buratino extends Tank {
     @Override
     public void setHealth_points(int health_points) {
         super.setHealth_points(health_points);
+    }
+
+
+    @Override
+    public Tank clone() {
+        return super.clone();
     }
 }

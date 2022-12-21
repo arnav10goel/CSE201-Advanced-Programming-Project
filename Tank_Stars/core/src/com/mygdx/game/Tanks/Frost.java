@@ -1,6 +1,7 @@
 package com.mygdx.game.Tanks;
 
 import com.mygdx.game.Tanks.Tank;
+import org.jetbrains.annotations.NotNull;
 
 public class Frost extends Tank {
 
@@ -61,5 +62,11 @@ public class Frost extends Tank {
     @Override
     public float getY() {
         return super.getY();
+    }
+
+
+    @Override
+    public Tank clone() {
+        return super.clone();
     }
 }

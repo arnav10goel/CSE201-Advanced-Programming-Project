@@ -17,8 +17,11 @@ import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Ground;
 import com.mygdx.game.MyGdxGame;
 import com.mygdx.game.Player;
+import com.mygdx.game.Serialiser;
+import com.mygdx.game.Tanks.Tank;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.*;
 import java.util.ArrayList;
 
 public class Scene implements Screen{
@@ -35,13 +38,13 @@ public class Scene implements Screen{
     private final Texture img;
     private final Sprite img_sprite;
     private final Texture pause;
+    private final Texture endgame;
+    private final Sprite endgame_sprite;
     private final Sprite pause_sprite;
     private final Sprite health1_sprite;
     private final Sprite health2_sprite;
     private final Sprite player1_won;
     private final Sprite player2_won;
-    private final Texture bullet;
-    private final Sprite bullets;
     static MyGdxGame game;
     private final Vector3 coord;
     private final OrthographicCamera cam;
@@ -61,33 +64,39 @@ public class Scene implements Screen{
     private float fuel2;
     private double fin;
     private double fin2;
-    private float h1=0;
-    private float h2=0;
+    private float h1;
+    private float h2;
+    private float w;
+    private float h;
     int timer;
     private Sound sound;
     private Bezier<Vector2> path1;
-    ArrayList<Blast> blasts;
-
-    public Scene(MyGdxGame game, @NotNull Player p1, Player p2) {
+    public Scene(MyGdxGame game, @NotNull Player play1, Player play2, Ground myground, Tank t1, Tank t2) {
         this.sr = new ShapeRenderer();
         this.hr = new ShapeRenderer();
-        timer=0;
         this.fuelrenderer = new ShapeRenderer();
-        blasts=new ArrayList<Blast>();
-        this.myground = Ground.getInstance(); //Using Singleton Design Pattern to make the ground
+        this.myground = myground; //Using Singleton Design Pattern to make the ground
         Scene.game = game;
-        this.p2 = p2;
-        this.p1 = p1;
+        System.out.println(play1);
+        System.out.println(play2);
+        System.out.println(t1);
+        System.out.println(t2);
+        this.p2 = play2;
+        this.p1 = play1;
+        this.p1.setTank_chosen(t1);
+        this.p2.setTank_chosen(t2);
+        w = Gdx.graphics.getWidth();
+        h = Gdx.graphics.getHeight();
+        this.h1 = (w/5)-10;
+        this.h2 = (w/5)-10;
+        System.out.println(this.p1.getTank_chosen());
+        System.out.println(this.p2.getTank_chosen());
         batch = new SpriteBatch();
-        float w = Gdx.graphics.getWidth();
-        float h = Gdx.graphics.getHeight();
         img = new Texture(Gdx.files.internal("back_scene.png"));
         img_sprite = new Sprite(img);
         img_sprite.setSize(w,h);
         fuel1=(float)0.15*w;
         fuel2=(float)0.15*w;
-        h1=(w/5)-10;
-        h2=(w/5)-10;
         angle = 4;
         angle2 = 4;
         sound = Gdx.audio.newSound(Gdx.files.internal("explosion-6055.mp3"));
@@ -114,7 +123,10 @@ public class Scene implements Screen{
                 player2 = new Texture("spectre_player2.png");
                 break;
         }
-
+        endgame = new Texture("EndGame.png");
+        endgame_sprite = new Sprite(endgame);
+        endgame_sprite.setPosition(970*w/2550, 513*w/2550);
+        endgame_sprite.setSize(endgame.getWidth()/6, endgame.getHeight()/6);
         pause = new Texture("pause.png");
         pause_sprite = new Sprite(pause);
         player1_sprite = new Sprite(player1);
@@ -130,28 +142,41 @@ public class Scene implements Screen{
         pause_sprite.setSize(pause.getWidth()/5, pause.getHeight()/5);
         player1_sprite.setSize(player1.getWidth()/8, player1.getHeight()/8);
         player2_sprite.setSize(player2.getWidth()/8, player2.getHeight()/8);
-        p1.getTank_chosen().setX(0.08f*w);
-        p1.getTank_chosen().setY(this.myground.getPoints_y().get((int) (0.16f*w)));
-        p2.getTank_chosen().setX(0.75f*w);
-        p2.getTank_chosen().setY(this.myground.getPoints_y().get((int) (1.5f*w)));
-        player1_sprite.setPosition(0.08f*w, this.myground.getPoints_y().get((int) (0.16f*w)));
-        player2_sprite.setPosition(0.75f*w, this.myground.getPoints_y().get((int) (1.5f*w)));
+        player1_sprite.setPosition(p1.getTank_chosen().getX(), this.myground.getPoints_y().get((int) (2*p1.getTank_chosen().getX()))); //Use getX() here
+        player2_sprite.setPosition(p2.getTank_chosen().getX(), this.myground.getPoints_y().get((int) (2*p2.getTank_chosen().getX())));
         pause_sprite.setPosition(85*w/2550, 1000*h/1180);
+
         Texture player1won = new Texture("player1_won.png");
         Texture player2won = new Texture("player2_won.png");
         player1_won = new Sprite(player1won);
         player2_won = new Sprite(player2won);
-        player1_won.setSize(w/2,h/2);
-        player2_won.setSize(w/2,h/2);
-        player1_won.setPosition(w/4,w/4);
-        player2_won.setPosition(w/4,w/4);
-        bullet = new Texture("bullet.png");
-        bullets = new Sprite(bullet);
-        bullets.setSize(w/1000, w/1000);
+
         this.coord = new Vector3();
         this.turn = 1;
         this.cam = new OrthographicCamera();
         this.cam.setToOrtho(false);
+        switch (p2.getTank_status()){
+            case "Buratino_P2":
+                h2= ((float)(p2.getTank_chosen().getHealth_points())/750)*(h2);
+                break;
+            case "Frost_P2":
+                h2= ((float)(p2.getTank_chosen().getHealth_points())/900)*(h2);
+                break;
+            case "Spectre_P2":
+                h2= ((float)(p2.getTank_chosen().getHealth_points())/1050)*(h2);
+                break;
+        }
+        switch (p1.getTank_status()){
+            case "Buratino_P1":
+                h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h1);
+                break;
+            case "Frost_P1":
+                h1= ((float)(p1.getTank_chosen().getHealth_points())/900)*(h1);
+                break;
+            case "Spectre_P1":
+                h1= ((float)(p1.getTank_chosen().getHealth_points())/1050)*(h1);
+                break;
+        }
     }
 
     @Override
@@ -177,6 +202,7 @@ public class Scene implements Screen{
         fuelrenderer.setColor(0,0,0,1);
         fuelrenderer.rect(0.76f*w,0.05f*h,(float)0.15*w,(float)0.05*h);
         fuelrenderer.end();
+
         hr.setAutoShapeType(true);
         hr.begin(ShapeRenderer.ShapeType.Filled);
         hr.setColor(Color.DARK_GRAY);
@@ -184,23 +210,23 @@ public class Scene implements Screen{
         hr.setColor(Color.DARK_GRAY);
         hr.rect((w/2)+(w/15),951*h/1180,w/5, h/10);
         hr.end();
+
         batch.begin();
         player1_sprite.draw(batch);
         player2_sprite.draw(batch);
         pause_sprite.draw(batch);
         if(p1.getTank_chosen().getHealth_points() <= 0 || p2.getTank_chosen().getHealth_points() <= 0){
-            if(p1.getTank_chosen().getHealth_points() <= 0){
-                player2_won.draw(batch);
-                System.out.println("Player 1 lost and Player 2 won");
-            }
-            else {
-                player1_won.draw(batch);
-                System.out.println("Player 2 lost and Player 1 won");
-            }
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            endgame_sprite.draw(batch);
+            if(Gdx.input.justTouched()) {
+                coord.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+                cam.unproject(coord);
+
+                float touch_x = coord.x;
+                float touch_y = coord.y;
+
+                if(touch_x >= endgame_sprite.getX() && touch_x <= endgame_sprite.getX() + endgame_sprite.getWidth() && touch_y >= endgame_sprite.getY() && touch_y <= endgame_sprite.getY() + endgame_sprite.getHeight()){
+                    game.setScreen(new MainMenu(game));
+                }
             }
         }
         batch.end();
@@ -240,16 +266,10 @@ public class Scene implements Screen{
         pause.dispose();
         player1.dispose();
         player2.dispose();
-
     }
-
-    public static float calcrange(float w, float pos){
-        return w-pos;
-    }
-    public void handleTouch() throws InterruptedException {
+    public void handleTouch() throws InterruptedException{
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
-        timer=0;
         ShapeRenderer fsr = new ShapeRenderer();
         fsr.setAutoShapeType(true);
         fsr.begin(ShapeRenderer.ShapeType.Filled);
@@ -258,6 +278,7 @@ public class Scene implements Screen{
         fsr.setColor(Color.YELLOW);
         fsr.rect(0.76f*w,0.05f*h,fuel2,(float)0.05*h);
         fsr.end();
+
         hr.setAutoShapeType(true);
         hr.begin(ShapeRenderer.ShapeType.Filled);
         hr.setColor(Color.TEAL);
@@ -274,10 +295,14 @@ public class Scene implements Screen{
             float touch_y = coord.y;
 
             if (touch_x >= pause_sprite.getX() && touch_x <= (pause_sprite.getX() + pause_sprite.getWidth()) && touch_y >= pause_sprite.getY() && touch_y <= (pause_sprite.getY() + pause_sprite.getHeight())) {
+                try{
+                    this.serialise();
+                }
+                catch (IOException e){
+                    System.out.println("File not found");
+                }
                 game.setScreen(new PauseMenu(game));
             }
-
-
         }
         if(p1.getTank_chosen().getHealth_points() > 0 && p2.getTank_chosen().getHealth_points() > 0) {
             if (this.turn == 1) {
@@ -321,7 +346,7 @@ public class Scene implements Screen{
                     if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
                         float pos = p1.getTank_chosen().getX() + player1.getWidth() / 16;
                         ArrayList<Float> pts = myground.getPoints_y();
-                        range=calcrange(w,pos);
+                        range = w - pos;
                         velocity = Math.pow(range * 10, 0.5);
                         fin = velocity * velocity * Math.sin(2 * Math.toRadians(angle)) / 10;
                         int points = 4;
@@ -342,6 +367,7 @@ public class Scene implements Screen{
                         float y3 = (pts.get((int) (2 * (pos + fin))));
                         Vector2 point3 = new Vector2(x3, y3);
                         controlPoints[3] = point3;
+
                         path1 = new Bezier<>(controlPoints);
                         // setup ShapeRenderer
                         ShapeRenderer srt = new ShapeRenderer();
@@ -386,7 +412,7 @@ public class Scene implements Screen{
                         Vector2 point3 = new Vector2(x3, y3);
                         controlPoints[3] = point3;
                         path1 = new Bezier<>(controlPoints);
-                        path1 = new Bezier<>(controlPoints);
+
                         // setup ShapeRenderer
                         ShapeRenderer srt = new ShapeRenderer();
                         srt.setAutoShapeType(true);
@@ -405,9 +431,7 @@ public class Scene implements Screen{
                         }
 
                         System.out.println(Math.abs(p2.getTank_chosen().getX() - p1.getTank_chosen().getX() - fin));
-                        System.out.println(bullets.getWidth());
                         if (Math.abs(p2.getTank_chosen().getX() - p1.getTank_chosen().getX() - fin) <= 5 + player1.getWidth() / 16) {
-                            //blasts.add(new Blast(p2.getTank_chosen().getX(),p2.getTank_chosen().getY()));
                             p2.getTank_chosen().setHealth_points(p2.getTank_chosen().getHealth_points() - 150);
                             switch (p2.getTank_status()){
                                 case "Buratino_P2":
@@ -421,7 +445,6 @@ public class Scene implements Screen{
                                     break;
                             }
                         }else if (Math.abs(p2.getTank_chosen().getX() - p1.getTank_chosen().getX() - fin) <= 7 + player1.getWidth() / 16) {
-                            //blasts.add(new Blast(p2.getTank_chosen().getX(),p2.getTank_chosen().getY()));
                             p2.getTank_chosen().setHealth_points(p2.getTank_chosen().getHealth_points() - 75);
                             switch (p2.getTank_status()){
                                 case "Buratino_P2":
@@ -597,7 +620,6 @@ public class Scene implements Screen{
 
                         }else if (Math.abs(p2.getTank_chosen().getX() - p1.getTank_chosen().getX() - fin2) <= 7 + player1.getWidth() / 16) {
                             p1.getTank_chosen().setHealth_points(p1.getTank_chosen().getHealth_points() - 75);
-                            blasts.add(new Blast(p1.getTank_chosen().getX(),p1.getTank_chosen().getY()));player1_sprite.setPosition((float) (p1.getTank_chosen().getX() - 0.01 * player1_sprite.getWidth()), p1.getTank_chosen().getY());
                             switch (p1.getTank_status()){
                                 case "Buratino_P1":
                                     h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h1);
@@ -640,8 +662,48 @@ public class Scene implements Screen{
             }
         }
         else{
-            game.setScreen(new MainMenu(game));
+
         }
+    }
+    public static float calcrange(float w, float pos){
+        return w-pos;
+    }
+
+    public void serialise() throws IOException {
+        Serialiser ser = new Serialiser();
+        int val = Serialiser.getCount_saved_games();
+        System.out.println(val);
+        Player p1_to_be_saved = p1.clone();
+        Player p2_to_be_saved = p2.clone();
+        Tank tank_of_p1 = p1.getTank_chosen().clone();
+        Tank tank_of_p2 = p2.getTank_chosen().clone();
+        Ground ground_to_be_saved = Ground.getInstance();
+        System.out.println(Serialiser.getP1_save().get(val));
+        FileOutputStream fileout_p1 = new FileOutputStream(Serialiser.getP1_save().get(val));
+        FileOutputStream fileout_p2 = new FileOutputStream(Serialiser.getP2_save().get(val));
+        FileOutputStream fileout_t1 = new FileOutputStream(Serialiser.getT1_save().get(val));
+        FileOutputStream fileout_t2 = new FileOutputStream(Serialiser.getT2_save().get(val));
+        FileOutputStream fileout_ground = new FileOutputStream(Serialiser.getGround_save().get(val));
+        ObjectOutputStream out_p1 = new ObjectOutputStream(fileout_p1);
+        ObjectOutputStream out_p2 = new ObjectOutputStream(fileout_p2);
+        ObjectOutputStream out_t1 = new ObjectOutputStream(fileout_t1);
+        ObjectOutputStream out_t2 = new ObjectOutputStream(fileout_t2);
+        ObjectOutputStream out_ground = new ObjectOutputStream(fileout_ground);
+        out_p1.writeObject(p1_to_be_saved);
+        out_p2.writeObject(p2_to_be_saved);
+        out_t1.writeObject(tank_of_p1);
+        out_t2.writeObject(tank_of_p2);
+        out_ground.writeObject(ground_to_be_saved);
+        out_p1.close();
+        out_p2.close();
+        out_t1.close();
+        out_t2.close();
+        out_ground.close();
+        fileout_p1.close();
+        fileout_p2.close();
+        fileout_t1.close();
+        fileout_t2.close();
+        fileout_ground.close();
     }
 }
 
