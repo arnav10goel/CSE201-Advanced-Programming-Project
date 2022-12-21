@@ -11,10 +11,12 @@ public abstract class Tank implements Cloneable, Serializable {
     private float y;
     private int fuel;
     private static Tank p1_chosen;
+    private static int turn;
 
     Tank(int x, int fuel){
         this.health_points = x;
         this.fuel = fuel;
+        this.turn = 1;
     }
     public void shoot(){
         // TO BE ADDED
@@ -64,6 +66,14 @@ public abstract class Tank implements Cloneable, Serializable {
 
     public static void setP1_chosen(@NotNull Tank p1_chosen) {
         Tank.p1_chosen = p1_chosen.clone();
+    }
+
+    public static void setTurn(int turn) {
+        Tank.turn = turn;
+    }
+
+    public static int getTurn() {
+        return turn;
     }
 
     public Tank clone(){

@@ -66,6 +66,8 @@ public class Scene implements Screen{
     private double fin2;
     private float h1;
     private float h2;
+    private float h11;
+    private float h22;
     private float w;
     private float h;
     int timer;
@@ -89,6 +91,8 @@ public class Scene implements Screen{
         h = Gdx.graphics.getHeight();
         this.h1 = (w/5)-10;
         this.h2 = (w/5)-10;
+        this.h11 = (w/5)-10;
+        this.h22 = (w/5)-10;
         System.out.println(this.p1.getTank_chosen());
         System.out.println(this.p2.getTank_chosen());
         batch = new SpriteBatch();
@@ -150,31 +154,35 @@ public class Scene implements Screen{
         Texture player2won = new Texture("player2_won.png");
         player1_won = new Sprite(player1won);
         player2_won = new Sprite(player2won);
+        player1_won.setPosition(970*w/2550, 713*w/2550);
+        player1_won.setSize(player1won.getWidth()/6, player1won.getHeight()/6);
+        player2_won.setPosition(970*w/2550, 913*w/2550);
+        player2_won.setSize(player2won.getWidth()/6, player2won.getHeight()/6);
 
         this.coord = new Vector3();
-        this.turn = 1;
+        this.turn = Tank.getTurn();
         this.cam = new OrthographicCamera();
         this.cam.setToOrtho(false);
         switch (p2.getTank_status()){
             case "Buratino_P2":
-                h2= ((float)(p2.getTank_chosen().getHealth_points())/750)*(h2);
+                h2= ((float)(p2.getTank_chosen().getHealth_points())/750)*(h22);
                 break;
             case "Frost_P2":
-                h2= ((float)(p2.getTank_chosen().getHealth_points())/900)*(h2);
+                h2= ((float)(p2.getTank_chosen().getHealth_points())/900)*(h22);
                 break;
             case "Spectre_P2":
-                h2= ((float)(p2.getTank_chosen().getHealth_points())/1050)*(h2);
+                h2= ((float)(p2.getTank_chosen().getHealth_points())/1050)*(h22);
                 break;
         }
         switch (p1.getTank_status()){
             case "Buratino_P1":
-                h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h1);
+                h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h11);
                 break;
             case "Frost_P1":
-                h1= ((float)(p1.getTank_chosen().getHealth_points())/900)*(h1);
+                h1= ((float)(p1.getTank_chosen().getHealth_points())/900)*(h11);
                 break;
             case "Spectre_P1":
-                h1= ((float)(p1.getTank_chosen().getHealth_points())/1050)*(h1);
+                h1= ((float)(p1.getTank_chosen().getHealth_points())/1050)*(h11);
                 break;
         }
     }
@@ -217,6 +225,12 @@ public class Scene implements Screen{
         pause_sprite.draw(batch);
         if(p1.getTank_chosen().getHealth_points() <= 0 || p2.getTank_chosen().getHealth_points() <= 0){
             endgame_sprite.draw(batch);
+            if(p1.getTank_chosen().getHealth_points() <= 0){
+                player2_won.draw(batch);
+            }
+            else{
+                player1_won.draw(batch);
+            }
             if(Gdx.input.justTouched()) {
                 coord.set(Gdx.input.getX(), Gdx.input.getY(), 0);
                 cam.unproject(coord);
@@ -346,9 +360,9 @@ public class Scene implements Screen{
                     if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
                         float pos = p1.getTank_chosen().getX() + player1.getWidth() / 16;
                         ArrayList<Float> pts = myground.getPoints_y();
-                        range = w - pos;
+                        range = 2 * calc_range(w,pos)/3;
                         velocity = Math.pow(range * 10, 0.5);
-                        fin = velocity * velocity * Math.sin(2 * Math.toRadians(angle)) / 10;
+                        fin = calc_final_position(this.velocity, this.angle);
                         int points = 4;
                         Vector2[] controlPoints = new Vector2[points];
                         float x = (pos);
@@ -390,9 +404,9 @@ public class Scene implements Screen{
                         sound.play(1.0f);
                         float pos = p1.getTank_chosen().getX() + player1.getWidth() / 16;
                         ArrayList<Float> pts = myground.getPoints_y();
-                        range = calcrange(w,pos);
+                        range = 2*calc_range(w,pos)/3;
                         velocity = Math.pow(range * 10, 0.5);
-                        fin = velocity * velocity * Math.sin(2 * Math.toRadians(angle)) / 10;
+                        fin = calc_final_position(this.velocity, this.angle);
                         int points = 4;
                         Vector2[] controlPoints = new Vector2[points];
                         float x = (pos);
@@ -435,44 +449,45 @@ public class Scene implements Screen{
                             p2.getTank_chosen().setHealth_points(p2.getTank_chosen().getHealth_points() - 150);
                             switch (p2.getTank_status()){
                                 case "Buratino_P2":
-                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/750)*(h2);
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/750)*(h22);
                                     break;
                                 case "Frost_P2":
-                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/900)*(h2);
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/900)*(h22);
                                     break;
                                 case "Spectre_P2":
-                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/1050)*(h2);
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/1050)*(h22);
                                     break;
                             }
                         }else if (Math.abs(p2.getTank_chosen().getX() - p1.getTank_chosen().getX() - fin) <= 7 + player1.getWidth() / 16) {
                             p2.getTank_chosen().setHealth_points(p2.getTank_chosen().getHealth_points() - 75);
                             switch (p2.getTank_status()){
                                 case "Buratino_P2":
-                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/750)*(h2);
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/750)*(h22);
                                     break;
                                 case "Frost_P2":
-                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/900)*(h2);
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/900)*(h22);
                                     break;
                                 case "Spectre_P2":
-                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/1050)*(h2);
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/1050)*(h22);
                                     break;
                             }
                         }else if (Math.abs(p2.getTank_chosen().getX() - p1.getTank_chosen().getX() - fin) <= 10 + player1.getWidth() / 16) {
                             p2.getTank_chosen().setHealth_points(p2.getTank_chosen().getHealth_points() - 50);
                             switch (p2.getTank_status()){
                                 case "Buratino_P2":
-                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/750)*(h2);
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/750)*(h22);
                                     break;
                                 case "Frost_P2":
-                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/900)*(h2);
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/900)*(h22);
                                     break;
                                 case "Spectre_P2":
-                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/1050)*(h2);
+                                    h2= ((float)(p2.getTank_chosen().getHealth_points())/1050)*(h22);
                                     break;
                             }
                         }
 
-                        turn = 2;
+                        this.turn = 2;
+                        Tank.setTurn(2);
                         p2.getTank_chosen().setFuel(250);
                         fuel2=(float)0.15*w;
                         System.out.println(p2.getTank_chosen().getHealth_points());
@@ -523,9 +538,9 @@ public class Scene implements Screen{
                     if (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
                         float pos2 = p2.getTank_chosen().getX() + player2.getWidth() / 16;
                         ArrayList<Float> pts = myground.getPoints_y();
-                        range2 = calcrange(w , pos2);
+                        range2 = 2*pos2/3;
                         velocity2 = Math.pow(range2 * 10, 0.5);
-                        fin2 = velocity2 * velocity2 * Math.sin(2 * Math.toRadians(angle2)) / 10;
+                        fin2 = calc_final_position(this.velocity2, this.angle2);
                         int points2 = 4;
                         Vector2[] controlPoints2 = new Vector2[points2];
                         float a = (pos2);
@@ -566,9 +581,9 @@ public class Scene implements Screen{
                         sound.play(1.0f);
                         float pos2 = p2.getTank_chosen().getX() + player2.getWidth() / 16;
                         ArrayList<Float> pts = myground.getPoints_y();
-                        range2 = calcrange(w , pos2);
+                        range2 = 2*pos2/3;
                         velocity2 = Math.pow(range2 * 10, 0.5);
-                        fin2 = velocity2 * velocity2 * Math.sin(2 * Math.toRadians(angle2)) / 10;
+                        fin2 = calc_final_position(this.velocity2, this.angle2);
                         int points2 = 4;
                         Vector2[] controlPoints2 = new Vector2[points2];
                         float a = (pos2);
@@ -608,13 +623,13 @@ public class Scene implements Screen{
                             p1.getTank_chosen().setHealth_points(p1.getTank_chosen().getHealth_points() - 150);
                             switch (p1.getTank_status()){
                                 case "Buratino_P1":
-                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h1);
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h11);
                                     break;
                                 case "Frost_P1":
-                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/900)*(h1);
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/900)*(h11);
                                     break;
                                 case "Spectre_P1":
-                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/1050)*(h1);
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/1050)*(h11);
                                     break;
                             }
 
@@ -622,13 +637,13 @@ public class Scene implements Screen{
                             p1.getTank_chosen().setHealth_points(p1.getTank_chosen().getHealth_points() - 75);
                             switch (p1.getTank_status()){
                                 case "Buratino_P1":
-                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h1);
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h11);
                                     break;
                                 case "Frost_P1":
-                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/900)*(h1);
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/900)*(h11);
                                     break;
                                 case "Spectre_P1":
-                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/1050)*(h1);
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/1050)*(h11);
                                     break;
                             }
 
@@ -636,18 +651,19 @@ public class Scene implements Screen{
                             p1.getTank_chosen().setHealth_points(p1.getTank_chosen().getHealth_points() - 50);
                             switch (p1.getTank_status()){
                                 case "Buratino_P1":
-                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h1);
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/750)*(h11);
                                     break;
                                 case "Frost_P1":
-                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/900)*(h1);
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/900)*(h11);
                                     break;
                                 case "Spectre_P1":
-                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/1050)*(h1);
+                                    h1= ((float)(p1.getTank_chosen().getHealth_points())/1050)*(h11);
                                     break;
                             }
 
                         }
-                        turn = 1;
+                        this.turn = 1;
+                        Tank.setTurn(1);
                         p1.getTank_chosen().setFuel(250);
                         fuel1=(float)0.15*w;
                         System.out.println(p1.getTank_chosen().getHealth_points());
@@ -662,11 +678,14 @@ public class Scene implements Screen{
             }
         }
         else{
-
+            System.out.println("Game Ended");
         }
     }
-    public static float calcrange(float w, float pos){
+    public static float calc_range(float w, float pos){
         return w-pos;
+    }
+    public static double calc_final_position(double velocity, int angle){
+        return velocity * velocity * Math.sin(2 * Math.toRadians(angle)) / 10;
     }
 
     public void serialise() throws IOException {
